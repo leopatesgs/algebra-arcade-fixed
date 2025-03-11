@@ -7,7 +7,7 @@ namespace SpriteKind {
     export const score = SpriteKind.create()
 }
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (level > 1) {
+    if (level > 2) {
         if (person.isHittingTile(CollisionDirection.Bottom)) {
             spriteutils.jumpImpulse(person, jumpheight)
             music.play(music.createSoundEffect(WaveShape.Square, 400, 600, 255, 0, 100, SoundExpressionEffect.None, InterpolationCurve.Linear), music.PlaybackMode.UntilDone)
@@ -171,7 +171,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.secretspecial, function (sprite,
     }
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (level > 1) {
+    if (level > 2) {
         animation.runImageAnimation(
         person,
         [img`
@@ -243,19 +243,57 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
             . . f f f f f f f f f f . . . . 
             . . . f f f . . . f f . . . . . 
             `],
-        150,
+        100,
         true
         )
-        scroller.scrollBackgroundWithSpeed(8, 0, scroller.BackgroundLayer.Layer0)
+        scroller.scrollBackgroundWithSpeed(10, 0, scroller.BackgroundLayer.Layer0)
     }
 })
 controller.right.onEvent(ControllerButtonEvent.Released, function () {
-    if (level > 1) {
+    if (level > 2) {
+        animation.stopAnimation(animation.AnimationTypes.All, person)
+        person.setImage(img`
+            . . . . . . f f f f f f . . . . 
+            . . . . f f e e e e f 2 f . . . 
+            . . . f f e e e e f 2 2 2 f . . 
+            . . . f e e e f f e e e e f . . 
+            . . . f f f f e e 2 2 2 2 e f . 
+            . . . f e 2 2 2 f f f f e 2 f . 
+            . . f f f f f f f e e e f f f . 
+            . . f f e 4 4 e b f 4 4 e e f . 
+            . . f e e 4 d 4 1 f d d e f . . 
+            . . . f e e e 4 d d d d f . . . 
+            . . . . f f e e 4 4 4 e f . . . 
+            . . . . . 4 d d e 2 2 2 f . . . 
+            . . . . . e d d e 2 2 2 f . . . 
+            . . . . . f e e f 4 5 5 f . . . 
+            . . . . . . f f f f f f . . . . 
+            . . . . . . . f f f . . . . . . 
+            `)
         scroller.scrollBackgroundWithSpeed(0, 0, scroller.BackgroundLayer.Layer0)
     }
 })
 controller.left.onEvent(ControllerButtonEvent.Released, function () {
-    if (level > 1) {
+    if (level > 2) {
+        animation.stopAnimation(animation.AnimationTypes.All, person)
+        person.setImage(img`
+            . . . . f f f f f f . . . . . . 
+            . . . f 2 f e e e e f f . . . . 
+            . . f 2 2 2 f e e e e f f . . . 
+            . . f e e e e f f e e e f . . . 
+            . f e 2 2 2 2 e e f f f f . . . 
+            . f 2 e f f f f 2 2 2 e f . . . 
+            . f f f e e e f f f f f f f . . 
+            . f e e 4 4 f b e 4 4 e f f . . 
+            . . f e d d f 1 4 d 4 e e f . . 
+            . . . f d d d d 4 e e e f . . . 
+            . . . f e 4 4 4 e e f f . . . . 
+            . . . f 2 2 2 e d d 4 . . . . . 
+            . . . f 2 2 2 e d d e . . . . . 
+            . . . f 5 5 4 f e e f . . . . . 
+            . . . . f f f f f f . . . . . . 
+            . . . . . . f f f . . . . . . . 
+            `)
         scroller.scrollBackgroundWithSpeed(0, 0, scroller.BackgroundLayer.Layer0)
     }
 })
@@ -405,10 +443,10 @@ function lvl1 () {
     animation.runMovementAnimation(
     person,
     animation.animationPresets(animation.parachuteLeft),
-    2000,
+    1800,
     false
     )
-    pause(2000)
+    pause(1700)
     person.ay = 700
     controller.moveSprite(person, movespeed, 0)
     scene.cameraFollowSprite(person)
@@ -424,7 +462,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`tile1`, function (sprite, loc
     statusbar.value += -1
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (level > 1) {
+    if (level > 2) {
         animation.runImageAnimation(
         person,
         [img`
@@ -496,10 +534,10 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
             . . . . f f f f f f f f f f . . 
             . . . . . f f . . . f f f . . . 
             `],
-        150,
+        100,
         true
         )
-        scroller.scrollBackgroundWithSpeed(-8, 0, scroller.BackgroundLayer.Layer0)
+        scroller.scrollBackgroundWithSpeed(-10, 0, scroller.BackgroundLayer.Layer0)
     }
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.hazardLava1, function (sprite, location) {
@@ -511,9 +549,59 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.coin, function (sprite, otherSpr
     sprites.destroy(otherSprite, effects.trail, 100)
     music.play(music.melodyPlayable(music.baDing), music.PlaybackMode.InBackground)
     score += 1
+    scoreblock()
 })
+function scoreblock () {
+    sprites.destroyAllSpritesOfKind(SpriteKind.score)
+    if (level == 1) {
+        if (score == 0) {
+            _0 = sprites.create(assets.image`0`, SpriteKind.score)
+            _0.setPosition(152, 10)
+        }
+        if (score == 1) {
+            _1 = sprites.create(assets.image`1`, SpriteKind.score)
+            _1.setPosition(152, 10)
+        }
+        if (score == 2) {
+            _2 = sprites.create(assets.image`2`, SpriteKind.score)
+            _2.setPosition(152, 10)
+        }
+        if (score == 3) {
+            _3 = sprites.create(assets.image`3`, SpriteKind.score)
+            _3.setPosition(152, 10)
+        }
+        if (score == 4) {
+            _4 = sprites.create(assets.image`4`, SpriteKind.score)
+            _4.setPosition(152, 10)
+        }
+        if (score == 5) {
+            _5 = sprites.create(assets.image`5`, SpriteKind.score)
+            _5.setPosition(152, 10)
+        }
+        if (score == 6) {
+            _6 = sprites.create(assets.image`6`, SpriteKind.score)
+            _6.setPosition(152, 10)
+        }
+        if (score == 7) {
+            _7 = sprites.create(assets.image`7`, SpriteKind.score)
+            _7.setPosition(152, 10)
+        }
+        if (score == 8) {
+            _8 = sprites.create(assets.image`8`, SpriteKind.score)
+            _8.setPosition(152, 10)
+        }
+        if (score == 9) {
+            _9 = sprites.create(assets.image`9`, SpriteKind.score)
+            _9.setPosition(152, 10)
+        }
+        if (score == 10) {
+            _10 = sprites.create(assets.image`10`, SpriteKind.score)
+            _10.setPosition(152, 10)
+        }
+    }
+}
 controller.B.onEvent(ControllerButtonEvent.Released, function () {
-    if (level > 1) {
+    if (level > 2) {
         myDart.throwDart()
     }
 })
@@ -530,13 +618,29 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Button, function (sprite, otherS
         level = 2
         level_contol()
     }
-    if (otherSprite == jumpboostshop && controller.A.isPressed()) {
+    if (otherSprite == level1select && controller.A.isPressed()) {
+        level = 3
         level_contol()
-        jumpheight += 12
+    }
+    if (otherSprite == jumpboostshop && controller.A.isPressed()) {
+        if (score >= 5) {
+            jumpheight += 12
+            score += -5
+            scoreblock()
+        } else {
+            music.play(music.melodyPlayable(music.powerDown), music.PlaybackMode.UntilDone)
+            game.splash("OOPS! NOT ENOUGH CREDITS!")
+        }
     }
     if (otherSprite == speedboostshop && controller.A.isPressed()) {
-        level_contol()
-        movespeed += 2
+        if (score >= 5) {
+            movespeed += 2
+            score += -5
+            scoreblock()
+        } else {
+            music.play(music.melodyPlayable(music.powerDown), music.PlaybackMode.UntilDone)
+            game.splash("OOPS! NOT ENOUGH CREDITS!")
+        }
     }
 })
 function level_contol () {
@@ -544,10 +648,11 @@ function level_contol () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Button)
     sprites.destroyAllSpritesOfKind(SpriteKind.secretvillan)
     sprites.destroyAllSpritesOfKind(SpriteKind.secretspecial)
-    sprites.destroyAllSpritesOfKind(SpriteKind.coin)
     sprites.destroyAllSpritesOfKind(SpriteKind.secret)
     sprites.destroyAllSpritesOfKind(SpriteKind.Projectile)
     sprites.destroyAllSpritesOfKind(SpriteKind.StatusBar)
+    sprites.destroyAllSpritesOfKind(SpriteKind.score)
+    sprites.destroyAllSpritesOfKind(SpriteKind.coin)
     scene.centerCameraAt(80, 60)
     if (level == 0) {
         scroller.setBackgroundScrollOffset(0, 0)
@@ -567,11 +672,23 @@ function level_contol () {
         scene.setBackgroundImage(assets.image`The shop`)
         tiles.setCurrentTilemap(tilemap`level18`)
         Cursor = sprites.create(assets.image`cursor`, SpriteKind.Player)
+        Cursor.setPosition(131, 77)
+        controller.moveSprite(Cursor)
+        Cursor.startEffect(effects.trail)
+        Cursor.setStayInScreen(true)
+        scoreblock()
+    }
+    if (level == 2) {
+        scene.setBackgroundImage(assets.image`level select`)
+        level1select = sprites.create(assets.image`level1button`, SpriteKind.Button)
+        Cursor = sprites.create(assets.image`cursor`, SpriteKind.Player)
+        Cursor.setPosition(131, 77)
+        level1select.setPosition(80, 40)
         controller.moveSprite(Cursor)
         Cursor.startEffect(effects.trail)
         Cursor.setStayInScreen(true)
     }
-    if (level == 2) {
+    if (level == 3) {
         lvl1()
     }
 }
@@ -790,6 +907,7 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.collectibleInsignia, func
 })
 let coin2: Sprite = null
 let Cursor: Sprite = null
+let level1select: Sprite = null
 let PLay: Sprite = null
 let Shop: Sprite = null
 let secretvillan2: Sprite = null
@@ -799,11 +917,23 @@ let jumpboostshop: Sprite = null
 let myDart: Dart = null
 let statusbar: StatusBarSprite = null
 let person: Sprite = null
+let score = 0
 let level = 0
 let jumpheight = 0
 let movespeed = 0
+let _10: Sprite = null
+let _9: Sprite = null
+let _8: Sprite = null
+let _7: Sprite = null
+let _6: Sprite = null
+let _5: Sprite = null
+let _4: Sprite = null
+let _3: Sprite = null
+let _2: Sprite = null
+let _1: Sprite = null
+let _0: Sprite = null
 movespeed = 94
 jumpheight = 27
 level = 0
-let score = 0
+score = 0
 level_contol()
