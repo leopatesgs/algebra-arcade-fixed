@@ -1,10 +1,9 @@
 namespace SpriteKind {
-    export const coin = SpriteKind.create()
-    export const secret = SpriteKind.create()
-    export const secretvillan = SpriteKind.create()
     export const secretspecial = SpriteKind.create()
+    export const secret = SpriteKind.create()
+    export const coin = SpriteKind.create()
+    export const scorenumbers = SpriteKind.create()
     export const Button = SpriteKind.create()
-    export const score = SpriteKind.create()
 }
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     if (level > 2) {
@@ -13,6 +12,11 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
             music.play(music.createSoundEffect(WaveShape.Square, 400, 600, 255, 0, 100, SoundExpressionEffect.None, InterpolationCurve.Linear), music.PlaybackMode.UntilDone)
         }
     }
+})
+scene.onOverlapTile(SpriteKind.Player, myTiles.tile1, function (sprite, location) {
+    person.startEffect(effects.ashes, 500)
+    scene.cameraShake(3, 200)
+    statusbar.value += -1
 })
 function HP () {
     statusbar = statusbars.create(110, 4, StatusBarKind.Health)
@@ -24,21 +28,7 @@ function HP () {
     statusbar.positionDirection(CollisionDirection.Top)
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (level > 1) {
-        myDart = darts.create(assets.image`shoot`, SpriteKind.Projectile, person.x, person.y)
-        myDart.setTrace()
-        myDart.angle = 330
-        myDart.pow = 110
-        myDart.gravity = 30
-        spriteutils.onSpriteUpdateInterval(myDart, 100, function (sprite) {
-            myDart.angle += 2
-        })
-    }
-})
-sprites.onOverlap(SpriteKind.Player, SpriteKind.secretvillan, function (sprite, otherSprite) {
-    person.startEffect(effects.disintegrate)
-    scene.cameraShake(4, 500)
-    statusbar.value += -3
+	
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.hazardLava0, function (sprite, location) {
     person.startEffect(effects.fire, 500)
@@ -52,11 +42,11 @@ function shopupgrades () {
     speedboostshop.setPosition(64, 46)
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.secretspecial, function (sprite, otherSprite) {
-    sprites.destroy(otherSprite, effects.disintegrate, 200)
-    scene.cameraShake(8, 200)
+    sprites.destroy(otherSprite, effects.disintegrate, 500)
+    scene.cameraShake(8, 750)
     tiles.setTileAt(value, sprites.dungeon.greenOuterNorth2)
-    for (let value of tiles.getTilesByType(assets.tile`myTile2`)) {
-        secretvillan2 = sprites.create(assets.image`door`, SpriteKind.secretvillan)
+    for (let value of tiles.getTilesByType(myTiles.tile5)) {
+        secretvillan2 = sprites.create(assets.image`door`, SpriteKind.Enemy)
         tiles.placeOnTile(secretvillan2, value)
         animation.runImageAnimation(
         secretvillan2,
@@ -161,12 +151,12 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.secretspecial, function (sprite,
             ........................
             ........................
             `],
-        2000,
+        1000,
         true
         )
         tiles.setTileAt(value, sprites.dungeon.greenOuterNorth2)
     }
-    for (let value of tiles.getTilesByType(assets.tile`myTile3`)) {
+    for (let value of tiles.getTilesByType(myTiles.tile6)) {
         tiles.setTileAt(value, sprites.dungeon.greenOuterNorth2)
     }
 })
@@ -298,6 +288,23 @@ controller.left.onEvent(ControllerButtonEvent.Released, function () {
             `)
         scroller.scrollBackgroundWithSpeed(0, 0, scroller.BackgroundLayer.Layer0)
     }
+})
+scene.onOverlapTile(SpriteKind.Player, myTiles.tile10, function (sprite, location) {
+    music.play(music.createSoundEffect(
+    WaveShape.Noise,
+    386,
+    1681,
+    255,
+    0,
+    6120,
+    SoundExpressionEffect.Vibrato,
+    InterpolationCurve.Linear
+    ), music.PlaybackMode.InBackground)
+    scene.cameraShake(8, 5000)
+    timer.after(6150, function () {
+        level = 5
+        level_contol()
+    })
 })
 function lvl1 () {
     value = value
@@ -455,13 +462,12 @@ function lvl1 () {
     coins()
     HP()
 }
+browserEvents.H.onEvent(browserEvents.KeyEvent.Pressed, function () {
+    level = 0
+    level_contol()
+})
 statusbars.onZero(StatusBarKind.Health, function (status) {
     game.gameOver(false)
-})
-scene.onOverlapTile(SpriteKind.Player, assets.tile`tile1`, function (sprite, location) {
-    person.startEffect(effects.ashes, 500)
-    scene.cameraShake(3, 200)
-    statusbar.value += -1
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     if (level > 2) {
@@ -556,118 +562,118 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.coin, function (sprite, otherSpr
     scoreblock()
 })
 function scoreblock () {
-    sprites.destroyAllSpritesOfKind(SpriteKind.score)
+    sprites.destroyAllSpritesOfKind(SpriteKind.scorenumbers)
     if (level == 1) {
         if (score == 0) {
-            _0 = sprites.create(assets.image`0`, SpriteKind.score)
+            _0 = sprites.create(assets.image`0`, SpriteKind.scorenumbers)
             _0.setPosition(152, 10)
         }
         if (score == 1) {
-            _1 = sprites.create(assets.image`1`, SpriteKind.score)
+            _1 = sprites.create(assets.image`1`, SpriteKind.scorenumbers)
             _1.setPosition(152, 10)
         }
         if (score == 2) {
-            _2 = sprites.create(assets.image`2`, SpriteKind.score)
+            _2 = sprites.create(assets.image`2`, SpriteKind.scorenumbers)
             _2.setPosition(152, 10)
         }
         if (score == 3) {
-            _3 = sprites.create(assets.image`3`, SpriteKind.score)
+            _3 = sprites.create(assets.image`3`, SpriteKind.scorenumbers)
             _3.setPosition(152, 10)
         }
         if (score == 4) {
-            _4 = sprites.create(assets.image`4`, SpriteKind.score)
+            _4 = sprites.create(assets.image`4`, SpriteKind.scorenumbers)
             _4.setPosition(152, 10)
         }
         if (score == 5) {
-            _5 = sprites.create(assets.image`5`, SpriteKind.score)
+            _5 = sprites.create(assets.image`5`, SpriteKind.scorenumbers)
             _5.setPosition(152, 10)
         }
         if (score == 6) {
-            _6 = sprites.create(assets.image`6`, SpriteKind.score)
+            _6 = sprites.create(assets.image`6`, SpriteKind.scorenumbers)
             _6.setPosition(152, 10)
         }
         if (score == 7) {
-            _7 = sprites.create(assets.image`7`, SpriteKind.score)
+            _7 = sprites.create(assets.image`7`, SpriteKind.scorenumbers)
             _7.setPosition(152, 10)
         }
         if (score == 8) {
-            _8 = sprites.create(assets.image`8`, SpriteKind.score)
+            _8 = sprites.create(assets.image`8`, SpriteKind.scorenumbers)
             _8.setPosition(152, 10)
         }
         if (score == 9) {
-            _9 = sprites.create(assets.image`9`, SpriteKind.score)
+            _9 = sprites.create(assets.image`9`, SpriteKind.scorenumbers)
             _9.setPosition(152, 10)
         }
         if (score == 10) {
-            _10 = sprites.create(assets.image`10`, SpriteKind.score)
+            _10 = sprites.create(assets.image`10`, SpriteKind.scorenumbers)
             _10.setPosition(152, 10)
         }
     }
 }
 controller.B.onEvent(ControllerButtonEvent.Released, function () {
-    if (level > 2) {
-        myDart.throwDart()
-    }
+	
 })
 controller.combos.attachCombo("URDL", function () {
-    level = 0
-    level_contol()
+	
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Button, function (sprite, otherSprite) {
-    if (otherSprite == Shop && controller.A.isPressed()) {
-        Shop.startEffect(effects.disintegrate, 200)
-        level = 1
-        level_contol()
-    }
-    if (otherSprite == PLay && controller.A.isPressed()) {
-        PLay.startEffect(effects.disintegrate, 200)
-        level = 2
-        level_contol()
-    }
-    if (otherSprite == level1select && controller.A.isPressed()) {
-        level1select.startEffect(effects.disintegrate, 200)
-        level = 3
-        level_contol()
-    }
-    if (otherSprite == level2select && controller.A.isPressed()) {
-        level2select.startEffect(effects.disintegrate, 200)
-        level = 4
-        level_contol()
-    }
-    if (otherSprite == jumpboostshop && controller.A.isPressed()) {
-        if (score >= 5) {
-            jumpboostshop.startEffect(effects.disintegrate, 200)
-            jumpheight += 12
-            score += -5
-            scoreblock()
-        } else {
-            music.play(music.melodyPlayable(music.powerDown), music.PlaybackMode.UntilDone)
-            game.splash("OOPS! NOT ENOUGH CREDITS!")
+    if (level < 3) {
+        if (otherSprite == Shop && controller.B.isPressed()) {
+            Shop.startEffect(effects.disintegrate, 200)
+            level = 1
+            level_contol()
         }
-    }
-    if (otherSprite == speedboostshop && controller.A.isPressed()) {
-        if (score >= 5) {
-            speedboostshop.startEffect(effects.disintegrate, 200)
-            movespeed += 2
-            score += -5
-            scoreblock()
-        } else {
-            music.play(music.melodyPlayable(music.powerDown), music.PlaybackMode.UntilDone)
-            game.splash("OOPS! NOT ENOUGH CREDITS!")
+        if (otherSprite == PLay && controller.B.isPressed()) {
+            PLay.startEffect(effects.disintegrate, 200)
+            level = 2
+            level_contol()
+        }
+        if (otherSprite == level1select && controller.B.isPressed()) {
+            level1select.startEffect(effects.disintegrate, 200)
+            level = 3
+            level_contol()
+        }
+        if (otherSprite == level2select && controller.B.isPressed()) {
+            level2select.startEffect(effects.disintegrate, 200)
+            level = 4
+            level_contol()
+        }
+        if (otherSprite == jumpboostshop && controller.B.isPressed()) {
+            if (score >= 5) {
+                jumpboostshop.startEffect(effects.disintegrate, 200)
+                jumpheight += 12
+                score += -5
+                scoreblock()
+            } else {
+                music.play(music.melodyPlayable(music.powerDown), music.PlaybackMode.UntilDone)
+                game.splash("OOPS! NOT ENOUGH CREDITS!")
+            }
+        }
+        if (otherSprite == speedboostshop && controller.B.isPressed()) {
+            if (score >= 5) {
+                speedboostshop.startEffect(effects.disintegrate, 200)
+                movespeed += 2
+                score += -5
+                scoreblock()
+            } else {
+                music.play(music.melodyPlayable(music.powerDown), music.PlaybackMode.UntilDone)
+                game.splash("OOPS! NOT ENOUGH CREDITS!")
+            }
         }
     }
 })
 function level_contol () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Player)
     sprites.destroyAllSpritesOfKind(SpriteKind.Button)
-    sprites.destroyAllSpritesOfKind(SpriteKind.secretvillan)
-    sprites.destroyAllSpritesOfKind(SpriteKind.secretspecial)
-    sprites.destroyAllSpritesOfKind(SpriteKind.secret)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Player)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Player)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Player)
     sprites.destroyAllSpritesOfKind(SpriteKind.Projectile)
     sprites.destroyAllSpritesOfKind(SpriteKind.StatusBar)
-    sprites.destroyAllSpritesOfKind(SpriteKind.score)
-    sprites.destroyAllSpritesOfKind(SpriteKind.coin)
+    sprites.destroyAllSpritesOfKind(SpriteKind.scorenumbers)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Player)
     scene.centerCameraAt(80, 60)
+    scroller.scrollBackgroundWithSpeed(0, 0)
     if (level == 0) {
         scroller.setBackgroundScrollOffset(0, 0)
         scene.setBackgroundImage(assets.image`main menu`)
@@ -691,7 +697,7 @@ function level_contol () {
         scoreblock()
     }
     if (level == 2) {
-        scene.setBackgroundImage(assets.image`level select`)
+        scene.setBackgroundImage(assets.image`levelselect`)
         level1select = sprites.create(assets.image`level1button`, SpriteKind.Button)
         level2select = sprites.create(img`
             ff....................................................ff
@@ -727,6 +733,9 @@ function level_contol () {
     }
     if (level == 4) {
         lvl2()
+    }
+    if (level == 5) {
+        secretlvl()
     }
 }
 function lvl2 () {
@@ -883,149 +892,176 @@ function lvl2 () {
     scene.cameraFollowSprite(person)
     coins()
     HP()
-    for (let value of tiles.getTilesByType(assets.tile`myTile0`)) {
+    for (let value of tiles.getTilesByType(myTiles.tile3)) {
         secret = sprites.create(assets.image`special1`, SpriteKind.secret)
         tiles.placeOnTile(secret, value)
-        tiles.setTileAt(value, assets.tile`transparency16`)
+        tiles.setTileAt(value, myTiles.transparency16)
     }
-    for (let value of tiles.getTilesByType(assets.tile`myTile0`)) {
-        secret2 = sprites.create(assets.image`secretQ`, SpriteKind.secret)
+    for (let value of tiles.getTilesByType(myTiles.tile6)) {
+        secret2 = sprites.create(assets.image`special1`, SpriteKind.secretspecial)
         tiles.placeOnTile(secret2, value)
-        tiles.setTileAt(value, assets.tile`transparency16`)
+        tiles.setTileAt(value, myTiles.transparency16)
     }
+}
+function secretlvl () {
+    scene.setBackgroundImage(assets.image`black`)
+    tiles.setCurrentTilemap(tilemap`extra level`)
+    person = sprites.create(img`
+        . . . . . . f f f f . . . . . . 
+        . . . . f f f 2 2 f f f . . . . 
+        . . . f f f 2 2 2 2 f f f . . . 
+        . . f f f e e e e e e f f f . . 
+        . . f f e 2 2 2 2 2 2 e e f . . 
+        . . f e 2 f f f f f f 2 e f . . 
+        . . f f f f e e e e f f f f . . 
+        . f f e f b f 4 4 f b f e f f . 
+        . f e e 4 1 f d d f 1 4 e e f . 
+        . . f e e d d d d d d e e f . . 
+        . . . f e e 4 4 4 4 e e f . . . 
+        . . e 4 f 2 2 2 2 2 2 f 4 e . . 
+        . . 4 d f 2 2 2 2 2 2 f d 4 . . 
+        . . 4 4 f 4 4 5 5 4 4 f 4 4 . . 
+        . . . . . f f f f f f . . . . . 
+        . . . . . f f . . f f . . . . . 
+        `, SpriteKind.Player)
+    person.ay = 700
+    controller.moveSprite(person, movespeed, 0)
+    scene.cameraFollowSprite(person)
+    coins()
+    HP()
 }
 function secret_part () {
     scene.setBackgroundImage(img`
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
-        ................................................................................................................................................................
+        fffffffcbccffffffffffcfbddddddddddd111111111111111111111111dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddbffcddffffffcfcfffff
+        fffffffccffffcffffffbfddddddddd11111111111111111111111111111111ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddfccdbffffffffffffff
+        fffffffcffffffbffffffddddddddd1111111111111111111111111111111111ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddcffcbfffffffffffcdcf
+        ffffffcffffffffbdffffddddddd11111111111111111111111111111111111111ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddccffffffdfbfffffff
+        fcfffffffcdcdffdffdccdddddd11111111111111111111111111111111111111ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddbbffffffdffffffff
+        fffffffffdbddcfffffcddddd1111111111111111111111111111111111111111111dddd1dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddcfcfffffcfffbfff
+        fcffffbffbffffffffbbddddd111111111111111111111111111111111111111111d11dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddbdcfffffffffbffff
+        fcbffffffcfffffffcdddd1111111111111111111111111111111111111111111111111dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddccffffffffffffff
+        fdcccffffdbffcffccdddd111111111111111111cc1111111111111111111111111d111dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddcfffffffffffffff
+        fffffffffffffffcdddd1111111111111111111cccc111111111111111111111111111dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddfcfffffffffffff
+        ffffffffffffffcbddd11111111111111111111cccc11111111111111111111111111111dddd1ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddcffffffffffffff
+        fffffffddcfffdddddd11111111111111111111ccccc11111111111111111111111111111111ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddffffffffffffff
+        fffffffdddbffbddd111111111111111111111cccccc111111111111111111111111111111111dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddbcfffcffffffffff
+        ffffffcbfcccddddd111111111111111111111ccccccc11111111111111111111111111111111111dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddccfffffffffffff
+        fffffffffcfddddd1111111111111111111111ccccccc11111111111111111111111111111111111dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddcffffffffffff
+        ffffffffdfcdddd1111111d11111d111111111cccccccc11111111111111111111111111111111111dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddcfbfffcfffffff
+        ffffffffcfbddd11111111111111111111111ccccccccc1111111111111111111111111111111111d1dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddbfffdffffffff
+        fffffffcdcdddd11111111111111111111111cccccccccc1111111ccc111111111ccc111111111111dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddffffffffffff
+        fffffbfffcddd11111111111111111111111ccccccccccc1111111cccc111c1111ccc11111111111111dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddbcffffffffffff
+        fccffdcbfbddd11111111111111111111111cccccccccccc111111cccc11ccc111ccc1111111111111ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddbcffffffffffff
+        fffcffcdfbdd11111111111111111111111ccccccccccccccc1111cc1c11ccc11cccc111111111111111ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddbcffffffffffff
+        ffddfffbbbdd1111111111111111111111cccccccccccccccc1111cc1c11ccc11c11c111111111111111dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddcfccfffffffff
+        cfdffffbcdd11111111111111111111111cccccccccccccccc1111ccccccccccccccc1111111111111111ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddbfcdfffffffff
+        ffffffccdd111111111111111111111111cccccccccccccccc1111ccccccccccccccc1111111111111111ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddccfbfffffffff
+        ffcfffbdb111111111111111111111111111cccccccccccc111111ccccccccccccccc1111111111111111ddddddddddddddddddddddddddddddddddddddddddddddbbdddddddddddddddcfdbffffffff
+        fffffcddddd1111111111111111111111111cc1cc1ccd1cc111111ccccccccccccccc1111111111111111ddddddddddddddddddddddddddddddddddddddddddddddbddddddddddddddddbfcfffffffff
+        fffffbdddd11111111111111111111111111cc1cc1ccc1cc1111111ccccccccccccc1111111111111111ddddddddddddddddddddddddddddddddddddddddddddddbbddddddddddddddddcfcfffffffff
+        ffffcbddddd1111111111111111111111111cccccccccccc11111111ccccccccccc11111111111111111d1ddddddddddddddddddddddddddddddddddddddddddddbddddddddddddddddbcfffffffffff
+        fffccddddd11111111111111111111111111cccccccccccc111111111cccccccccc11111111111111111ddddddddddddddddddddddddddddddddddddddddddddddbdddddddddddddddbbffffffffffff
+        ffdcbddddd11111111111111111111111111cccccccccccc111111111ccccccccc111111111111111111ddddddddddddddddddddddddddddddddddddddddddddddbddddddddddddddddbffffffffffcf
+        ffccddddddd11111111111111111111111111cccccccccc1111111111ccccccccc1111111111111111111dddddddddddddddddddddddddddddddddddddddddddddbddddddbbdddddddbcffffffffffff
+        ffcbdddddd1111111111111111111111111111cccccccc11b11111111ccccccccc111111111111bb1111ddddddddddddddddddddddddddddddddddddddddddbbddbbdddddbbdddddddbccfffffffffff
+        ffcbddddd111111111111111111111111111111cccccccbccccccc111ccccccccc1111111111111b1111dddddddddddddddddddddddddddddddddddddddddddbbddbddddddbddddddddfffffffffffff
+        fcbbdddddd1111111111cccb1ccc1111cccc111ccccccccccccccccc1ccccccccc1111111111111b1111dddddddddddddddddddddddddddddddddddddddddddbbbdbbdddddbdbddddbbbcfffffffffff
+        fcddddddd1111111111ccccb1cccc11ccccc111cccccccccbbccbbbccccccccccc1111111111111b111ddddddddddddddddddddddddddbdddddddddddddddddddbddbbddddbbbddbbbcfffffffffffff
+        ccddddddd1111111111cccccbcccc11ccccc111cccccccccbbcccbbccccccccccc111111111111111111dddddddddddddddddddddddddbbdddddddddddddddddddbddbddddbbddbbbbffffffffffffff
+        ddddddddd1111111111ccc1ccccccccc1ccc111ccccccccccccccccccccccccccc1111111111111b111bdddddddddddddddddddddddddbbdddddddddddddddddddbbbbddddbddbbbbccfffffffffffff
+        dddddddd11111111111cc11ccc11cccc1ccc111ccccccccc1111cccccccccccccc1111111111111b111bddd1dddddddddddddddddddddbdddbdddddddddddddddddbbbddddbbbbbbbccfffffffffffff
+        dddddddd11111111111cccccccbcccccccccc11cccccccc1111111cccccccccccc1111111111111b111bddd1dddddddddddddddddddddbddbbdddddddddddddddddbbbdddbbbbbbbbccfffffffffffff
+        dddddddd11111111111ccccccccccccccccc111ccccccc1111b1111ccccccccccc1111111111111b1dbb1ddddddddddddddbbbbddddddbddbdddddddddddddddddddbbdddbbbbbbbccffffffffffffff
+        dddddddddd111111111cccccccccccccccc1bb1ccccccc1111bb111ccccccccccc11111b1111111b1dbbdddddddddddddddbddbbbddddbdbddddddddddddddddddddbbddbbbbbbbbcbffffffffffffff
+        dddddddddd1111111111cccccccccccccccccccccccccc111111111cccccccccccbb11111111111b1db1dddddddddddddddbdddbbddddbbdddddddddddddddddddddbbdbbbbbbbbccfffffffffffffff
+        dddddddddd11111111111cccccccccccccbccbbccccccc1111111b1cccccccccccbbbb111111111b1db1ddd1ddddddddddbbdddbbbddbbdddddddddddbbddddddddbbbbbbbbbbbcbbcffffffffffffff
+        ddddddddd1d11111111111ccccccccccccbbcbbccccccc1111111b1cccccccccccc1b1111111111bbbddddd1dddddddddbbdddddbbdbbddddddddddddbdddddddddbbbbbbbbbbccbcfffffffffffffff
+        ddddddddd1d11b11111111ccccccccccccbccbcccccccc111111bb1cccccccccccc111111111111bbbdddddddddddddddbbdddddbbbbbddddddddddddbdddddddddbbbbbbbbbbbbcffffffffffffffff
+        ddddddddd1d11b11111111cccccccccccccccccccccccc1111111bbcccccccccccc11111111111bbbdddddddddddddddddddddddbbbbddddddddddddbbdddddbddbbbbbbbbbbbccfffffffffffffffff
+        dddddddddddddbbd1bb111cccccccccccc111d1cccccccd1d1111bbcccccccccccc11111111111bbb1ddddddddddddddddddddddbbbbddddddddddddbbdddddbddbbbbbbbbbbbbccffffffffffffffff
+        dddddddddddddbbd1b1111ccccccccccccddbccccccccccc1ddddbccccccccccccc11111111bb1bb11dddbddddddddddddddddddbbbbddddddddddddbbdddddbdbbbbbbbbbbbbcffffffffffffffffff
+        ddddddddddddddbd1b11bbccccccccccccccccccccccccccbcccccccccccccccccb1d111111bbbbbdddddbbdddddddddddddddddbbbbddddddddddddbbdddddbdbbbbbbbbbbbbcffffffffffffffffff
+        ddddddddddddddbb1b11bbccccccccccccccccccccccccccccccccccccccccccccd1111b1111bbb11ddddbbdddddddddddddddddbbbbddddddddddddbbdddddbbbbbbbbbbbbbbcffffffffffffffffff
+        dddddddddddddddb1b1db1ccccccccccccccccccccccccccccccccccccccccccccc1111d1111bbb11dddddbbddddddddddddddddbbbbbddddddddddddbdddddbbbbbbbbbbbbbbbcfffffffffffffffff
+        ddddddddddddddddbb1bbdccccccccccccccccccccccccccccccccccccccccccccb1111d1111bbbddddddddbddddddddddddddddbbbbbddddddddddddbbdddbbbbbbbbbbbbbbbcffffffffffffffffff
+        ddddddddddddddddbb1bbdccccccccccccccccccccccccccccccccccccccccccccb1b11d1111bbbddddddddbbdbbddddddddddddbbbbbddddddddddddbbddbbbbbbbbbbbbbbbcfcffffffffffffffcff
+        ddddddddddddddddbb1b11cccccccccccccccccccccccccccccccccccccccccccccbbb111111bbbddddddddbbdbdddddddbbddddbbbbbdddddddddddbbbbbbbbbbbbbbbbbbbccfffffffffffffffffff
+        ddddddddddddddddbddbd1ccccccccccccccccccccccccccccccccccccccccccccbbb111d111bbbb1dddddddbbbdddddddbbddddbbbbbddddddddbdbbbbbbbbbbbbbbbbbbbbcfcffffffffffffffffff
+        ddddddddddddddddbbb111cccccccccccccccccccccccccccccccccccccccccccc1bb1111111bbbbddddddddbbbdddddddbdddddbbbbbddddbdddbdbbbbbbbbbbbbbbbbbbbbffffffffffffffffffcff
+        ddddddddddddddddbbd111ccccccccccccccccccccccccccccccccccccccccccccd1bbb11111bbbbdddddddddbbddddddbbdddddbbbbbdddbbdddbbbbbbbbdbbbbbbbbbbbbcfffffffffffffffffffff
+        ddddddddddddddddbbdd1dcccccccccccccccccccccccccccccccccccccccccccc111bb11111bbbbdddd1ddddbbddddddbbdddddbbbbbdddbbddddddbdddddddddbbbbbbbbcfffffffcfffffffffffff
+        dddddddbbdddddbbbbddddcccccccccccccccccccccccccccccccccccccccccccc111bb1111bbbbbdddddddddbbbdddddbbdddddbbbbbddddbdbdddddddddddddddddddddddfffffffffffffffffffff
+        dbddddddddbbbbbbbbbbbbccccccccccccccccccccccccccccccccccccccbcccccb11bb1111bbbbbdddddddddbbbdddddbbdddddbbbbbbdddddddddddddddbddddddddddbbcfffffffffffffffffffff
+        ddbddbddbbbbbbbbbbbbbbcccccccccccccccccccccccccccccbccccccccccccccd11b11111bbbbbbddddddddbbbdddddbbddddbbbbbbdddddddddddddddddddddddddddbcffffffffffffffffffffff
+        dbbbbbbbbbbbbbbbbbbbbbcccccccccccccccccccccccccccccccccccccccccccc111bb111bbbbbbbbdddddddbbbbddddbbdddbbbbbbddddddddddddddddddddddddddbbbcdfffffffffffffffffffff
+        bbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccccccccccccccccccccccbb1bb1bbbbbbbbbbbbdddddbbbbddddbbddbbbbddbbdddddddddddddddddddbddddbccfddfffffffffffffffffffff
+        dbbbbbbbbbbbbbbbbbbbbbbcccccccccccccccccccccccccccccccccccccccccccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbdddddddddddddbdddddddddddddbcffffffffffffffffffffffffff
+        bbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccccccccccccccccccccccbbbbbbbbbbbbbbbbbbbbbbbbbbbbdbbbdbddddbdddddddddddddddddddddddddddccffffffffffffffffffffffffff
+        bbbbbbbbddbbbbbbbbbbbbcccccccccccccccccccccccccccccccccccccccccccccbbbbbbbbbbbbbbbbbbbbbbbbddddddddddbddddddddddddddddddddddbdddddbbbffbdfffffffffffffffffffffff
+        bbbbbbbdddddbbbbbbbbbbcccccccccccccccccccccccccccccccccccccccccccccbbbbbbbbbbbbbbbbbbbbbbddddbddddddddbdddddddddddddddddddddddddddbddfcbfdffffffffffffffffffffff
+        bbbbddddddddddddddbbbbcccccccccccccccccccccccccccccccccccccccccccccccbbbbbbbbbbbbdddddddddddddddddddddddddddddddddddddddddddddddddbdffdffbcfffffffffffffffffffff
+        bbbddddddddddddbbbbbbbcccccccccccccccccccccccccccccccccccccccccccccccccbbbdbbdbdddddddbddddbddddddddddddddddddddddddddddddddddddddcffcdfffffffffffffffffcfffffff
+        bbdddddddddddddbbbbbbbcccccccccccccccccccccccccccccccccccccccccccccbcccbbbbbddbdddddddddddddddddddddddddddddddddddddddddddddddddbcdffdfcdfffffffffffffffffffffff
+        bddddddddddddddbdbbbbccccccccccccccccccccccccccccccccccccccccccbcbbbcbddddddddddddbddddddddddddddddddddddddddddddddddbddddddddddbfcffffcffffffffffffffffffffffff
+        ddddddddddddddddbdbbbcccccccccccccccccccccccccccccccccccccccccbbcddddcdbddddbbddddbbdddddddddddbdddddddddddddddddddbddddddddddddcbdffffffffffbfffffcffffffffcbff
+        dbdbddddddddbdbdbbbbccccccccccccccccccccccccccccccccccbcccbcbbdbcddddddddddddddddddddddddbddddddddddddddddddddddddddddddddddddddcffffffffffffffffffffffffcfffddf
+        ddddddbddddddddbbbbbcccccccccccccccccccccccccccccccbbcbccbbbbdbdddddddddddbbbddddddddddddddddddddddddddddddddddddddddddddddddddbffffffffffffffffffffffffcdfffcff
+        ddddddddddddbdbbbbbbccccccccccccccccccccccccccccccbbbbbbdddddddbddddddddddddbddddddddddddddddddddddddddddddddddddddddddddddddddcfffffffffffffffffffffffffffdffff
+        dddddddddddddbbbbbbcccccccccccccccccccccccccccccbbbcddddbdbcdddcddddddddddddddddbdddbddddddddddbdddddddddddddddddddddddddddddddccfffffffffffffffffffffffffffffff
+        ddddddddddddbbbbbbbcccccccccccccccccccccccccccbbddddddddbdbddddbdddddddddddddddddddddddddbbbddddddddddddddddddddddddddddddddddcfcffffffffffffffffcffffffffffffff
+        bdbddddddbddbbbbbbccccccccccccccccccccccccccbddddbbdddddddddddddddddddbddddddddddddddddddddddddddddbdbdddddddddddddddddddddddbffffffffcffffffffffffffffcfcffffff
+        dbddbdddddddbbbbcccccccccccccccccccccccccccdbdbdddddddddddddddddddddddbddddddddbdcbddddddddddddddddddddddddddddddddddddddddddcfffffffffffffffffffffffffffcffffff
+        dddddddddddddddddbcbcccccccccccccccccccccbddcbbcdddbddddddddddddcdbddddddddddddddddddddbdddddddddddddddddddddddddddddddddddddfffbffffffffffffffffffffffffffcffff
+        ddddddddddddcddddddbbccccccccccccccccbcbcbddddddbdbcddddddddddddddddddddddddddcbddddddddddddbdddddddddddddddddddddddddddddddcfffdfffffffffffffffffffffffffffffff
+        dddddddddddbcdddddbddcbbcccccccbcccbbbbbccddbddddbdbdddddddddddddddddddddddddddddddddddddddddddddddddddddddbbddddddddddddddbffffcfffffffffffffffffffffffffffffff
+        bdddddddddcdddddddddbcbbbcbbbcbbbdddbddddbddddddddddddddddbddddddddddddddddbcdddcddddddddddddddddddddddddddccddddddddddddddbddfffffffffffcffffffffffffffffcccfff
+        ddddddddddddbddddbdddbbdbcbddbdbddddddddddbdddddddbdddddcddddddddddddbddddddddddddddddbddddddddbdddddddddddddddddddddddddddcdfffffffffffffffffffffffffffffccfffc
+        dddcdddddddddddddddddcdddddddbdbbbdddbddddddddddddccdddddbddddddddcddddddddcddddddddddddddddddddddddddddddddddddddddcddddddcffffffffffffffffffffffffffffffffffff
+        dddbdddddddddddddddddcdddddddcbddddbbddddddcdbddbdddddddddddbcbbbdcbddddddcbddddddddddddddddddddddddddddbddddddddddddddddddcfffffffffffffffcffffffffffffffffffff
+        bdddddddddddddddddddddddddddbddbdbcbdbbddddbdddddddddddddbbbbbbcbbbbcdbbddddbddbcddddddddddddddddbdddddddddddddddddddddddddcffffbdcffffffffcffffffffffcfffffffff
+        dddddddddddddddddddddddddddbbdddddbcdddddddbddddcdbbdbbbbcccbbccccbcbcbbbbbbbbccbcbbbdbbbbddddddddddddddddddddddddddbbbbdddcffffcfbfffffffffffffffffffffffffffff
+        dddddddddddddddddddbdddddcbbddddddbbdddddddbbddddbbbbbccccccccccccccccccccccccccccbccbcbbccbdbbdddddddddddddddddddbbbbbbddbccfddfffffffffffbbfffffffffffffffffff
+        bbbdddddddbddddddddddddbddcddbdddddbbddbccbcccbbcbbbcbccccccccccccccccccccccccccbcccccccccccccbbbdddddddddddddbbbbccccbbddccfffffcffffffffffffffffffffffffffffff
+        cccbddddddddddddddddddddddbdddddbbbcbcccccbcccccccccccccccccccccccccccccccccccccccccccccccccccbccccbdbdddbdbbbcccbccbbbdddbfffffdfffffffffffffffffffffffffffffff
+        ccccddbdddddddddddcddddccbbbccbbcbbccccccbcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccbcccbdddddfffffffffffffffcfffffffffffffffffffff
+        ccbbbbbddddddddddbcdddcccccccccbccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccbcccccccccccccccccbbddddddbfffffffffffffffffffffffffffffffffffff
+        ccccccbcbbbdddddbcccbccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccbddddddddbfffffffffffffffffffffffffffffffffffff
+        cccccccbccbbbcbccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccbcbdddddddddbcffffffffffffffffcbfffffffffffffffffff
+        cccccccccccbcbcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccbccccccccccccccccbbdddddbdddbcfffffffffffffffffffffffffffffffffffff
+        ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccbcbbcccccccccccccbbbbddddddddddbcffcffffffffffffffffffffffffffffffffff
+        ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccbcccbbcccccbbcccccccbbbbdddddddddddbccffffffffffffffffffffffffffffffffffff
+        cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccbcbddddddbbcbbbdbccccbbdddddbdddddddddcffdffdffffffffffffffffffffffffffffffff
+        cccccccccccccccccccccccccccccccbbccccccccccccccccccccccccccccccccccccccccbcccbbbbbbddddddddddddddbbbbbbdddddcdddddddddddbcfffffffffffffffffffffffffffffffffffffc
+        cccccccccccccccccccccccccccccbbddcbccccbccccccccccccccccccccccccccccccbdbbbbddddbdddddbddddddddddddddddddddddccdddddddddcfffffffffffffffffffffffffffffffffffffff
+        cccccccccccccccccccccccccccbbbcddbbcbbbbbccbbcccccccccccccccccccccbbbddddbbdddddbdccddbdddddddddddddddddddddddddddddddbcffffffffffffffffffffcfffffffffffffffffff
+        ccccccccccccccccccccccccccbddddddbbbbddbbbbdbccccccccccccccccccbcddddddddddbddcbdccbddddddddddddddddddddddddddddddddcbfdffffffffffffffffffffffffffffffffffffffff
+        cccccccccccccccbccccccccbcdddddddddbddddddbbbddbbbbccccccccccccdbdddddddddddbddddddddddddddddddddddddddddddddddddddcfcfffffffffffffffffcbffffffffffffffcffffffff
+        cccccccccccccccccccccfccccbddddddddddddddbcbcdddddbbbcccccbbbcdddddddbdddddddddddddddddddddddddddddddddddddddddddcdffbffffffffffffffffffbffffffffffffcbcffffffff
+        ccccccccccccccccccfccffffccbdddddddddddddddbdbddddddcdbcbdddddddddddddddddddddddddddddddddddddddddddddddddddddddbcfffdffcfffffbfffffffffdccfffffffffffffffffffff
+        cccccccccccccccffcffcccffffccdddddddddddddcccdddddbdbddbdddddddddddddddddddddddddddddddddddddddddddddddddddddddbcffffffddfffffffffffffffddffffffffffffffffffffff
+        cccccccfccffffcffffffcdfffffcfddddddddddddbccbddddbddddddddddddddddddddddddddddddddddddddddddddddddddddddddddbcfffffffffdfffffffffcffffffffffffffbffffffffffffff
+        ccfcccfffffffffffffffffffffcfccddddddddddbdcdddddddddddddddddddddddddddddddddddddddddddddbccbbccbcbbbdbbbdbfffdffffffffffffffffcfffffffffffffddfffffffffffffffff
+        cffcccffffffffffffffffffffffbcfcdddddddddccbdbdddddddddddddddddddddddddddddddddddddddbddfccccbfcfffffcbcfffcffcffffffffffccfffcffffffffffffffdbfffffffffffffffff
+        fcfffffffffffffffffffffffffffffbcbbdddddbcbcdbbbcbdbddddddddddddddddddddddddddddddbbccffffffffffffffffcbfffffffffffdffffcfffffffffffffffffffccffffffffffffffffff
+        fffffffffffffffffffffffffffffffcfffcdcfffcbcfcbccfccbddddddddddddddddddddddddddddbbbcfffffffffffffffffffcdbffffffffffffcdfdfffffffffffffffffffffffffffffffffffff
+        ffffffffffffffffffffffffffffffffffffcffffffdffdfcffffccddddddddddddddddddddddddbdccfffffffffffffffffffffcffffcffffffffffffffffffffffffffffffffffffffffffffffffff
+        ffffffffffffffffffffffffffffffdfffffbfbfffffbcfbffffffcccbcbcbdddddddddddddccccffffffffffffffffffffffffffffffffffffffffffcfffffffccfffffffffffffffffffffffffffff
+        ffffffffffffffffffffffffffffccffffffffffffffdfdcfffffddffcffccccffbdbbbdddcfdfffffffffffffffffffffffffffffffffffffffffffffffffffffffffbfffffffffffffffffffffffff
+        fffffffffffffffffffcffffffffffffffffffffffffffffffffddfcfbfffffffffffffffffcffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+        ffffffffffffffffffffffffffffffffffffffffffffffcfffffdcfffddffffffffffffffffbffffcbffffffffffcffffffffffffffffffffffffffffffffffffffffffffffffffffffffffcffcfffff
+        ffffffffffffffffffffffdfffffffffcfffffffbffffffffffdffffffffffffffffffcfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbdffffffffffffffffffffffffffff
+        fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbffffbffffdfffcddcfffffffffffffffff
+        fffffffffffffffffffffffffffffffffbffffffbffffffffffffffffffffffbfcffffcfffffffffffffffcffffffffffffffffffffffffffffffffffffffffffffffffffffdddffffffffffccffffff
         `)
     tiles.setCurrentTilemap(tilemap`secret exit`)
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.secret, function (sprite, otherSprite) {
-    sprites.destroy(otherSprite, effects.disintegrate, 100)
+    sprites.destroy(otherSprite, effects.disintegrate, 500)
     tiles.setTileAt(value, sprites.dungeon.greenOuterNorth2)
     secret_part()
 })
 function coins () {
-    for (let value of tiles.getTilesByType(assets.tile`myTile`)) {
+    for (let value of tiles.getTilesByType(myTiles.tile2)) {
         coin2 = sprites.create(img`
             . . b b b b . . 
             . b 5 5 5 5 b . 
@@ -1037,7 +1073,7 @@ function coins () {
             . . f f f f . . 
             `, SpriteKind.coin)
         tiles.placeOnTile(coin2, value)
-        tiles.setTileAt(value, assets.tile`transparency16`)
+        tiles.setTileAt(value, myTiles.transparency16)
         animation.runImageAnimation(
         coin2,
         [img`
@@ -1109,6 +1145,11 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.collectibleInsignia, func
     level = 0
     level_contol()
 })
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
+    person.startEffect(effects.disintegrate)
+    scene.cameraShake(4, 500)
+    statusbar.value += -3
+})
 let coin2: Sprite = null
 let secret2: Sprite = null
 let secret: Sprite = null
@@ -1121,7 +1162,6 @@ let secretvillan2: Sprite = null
 let value: tiles.Location = null
 let speedboostshop: Sprite = null
 let jumpboostshop: Sprite = null
-let myDart: Dart = null
 let statusbar: StatusBarSprite = null
 let person: Sprite = null
 let score = 0
