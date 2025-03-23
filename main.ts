@@ -13,6 +13,19 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
         }
     }
 })
+browserEvents.S.onEvent(browserEvents.KeyEvent.Pressed, function () {
+    if (level >= 3) {
+        myDart = darts.create(assets.image`shoot`, SpriteKind.Projectile, person.x, person.y)
+        myDart.setTrace()
+        myDart.angle = 330
+        myDart.pow = 110
+        myDart.gravity = 30
+        spriteutils.onSpriteUpdateInterval(myDart, 100, function (sprite) {
+            myDart.angle += 2
+        })
+        pause(10000)
+    }
+})
 scene.onOverlapTile(SpriteKind.Player, myTiles.tile1, function (sprite, location) {
     person.startEffect(effects.ashes, 500)
     scene.cameraShake(3, 200)
@@ -27,8 +40,10 @@ function HP () {
     statusbar.setBarBorder(1, 15)
     statusbar.positionDirection(CollisionDirection.Top)
 }
-controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-	
+browserEvents.S.onEvent(browserEvents.KeyEvent.Released, function () {
+    if (level >= 3) {
+        myDart.throwDart()
+    }
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.hazardLava0, function (sprite, location) {
     person.startEffect(effects.fire, 500)
@@ -610,9 +625,6 @@ function scoreblock () {
         }
     }
 }
-controller.B.onEvent(ControllerButtonEvent.Released, function () {
-	
-})
 controller.combos.attachCombo("URDL", function () {
 	
 })
@@ -1163,6 +1175,7 @@ let value: tiles.Location = null
 let speedboostshop: Sprite = null
 let jumpboostshop: Sprite = null
 let statusbar: StatusBarSprite = null
+let myDart: Dart = null
 let person: Sprite = null
 let score = 0
 let level = 0
